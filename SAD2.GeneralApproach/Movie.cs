@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace SAD2.GeneralApproach
+﻿namespace SAD2.GeneralApproach
 {
-	public class Movie : IComparable<Movie>
+	public class Movie
 	{
 		public Movie(long id, decimal rating)
 		{
@@ -14,9 +12,9 @@ namespace SAD2.GeneralApproach
 		public long Occurences { get; set; }
 		public decimal Rating { get; set; }
 
-		public int CompareTo(Movie other)
+		public override string ToString()
 		{
-			return Rating.CompareTo(other.Rating);
+			return $"{Id},{Rating/Occurences}";
 		}
 	}
 }

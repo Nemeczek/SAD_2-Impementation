@@ -10,11 +10,15 @@ namespace SAD2.GeneralApproach
 	{
 		static void Main(string[] args)
 		{
-			var output = generalApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
+			var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
+			var something = output.Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
+			var results = ReadAverages(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Averages.txt");
+
+			Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.Take(100).ToArray(), results.Select(v => v.Item2).Take(100).ToArray()));
 			Console.ReadKey();
 		}
 
-		private static IEnumerable<Decimal> generalApproach(string pathToFile)
+		private static IEnumerable<Movie> GeneralApproach(string pathToFile)
 		{
 			Dictionary<long, Movie> currentMoviesList = new Dictionary<long, Movie>();
 			const int bufferSize = 128;
@@ -36,7 +40,17 @@ namespace SAD2.GeneralApproach
 					currentMoviesList[movie.Id].Occurences++;
 				}
 			}
-			return currentMoviesList.Select(d => d.Value).Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
+
+			string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			var output = currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating/n.Occurences);
+
+			using (StreamWriter outputFile = new StreamWriter(mydocpath + @"\Averages.txt"))
+			{
+				foreach (var movie in output)
+					outputFile.WriteLine(movie.ToString());
+			}
+
+			return currentMoviesList.Select(d => d.Value);
 		}
 
 		private static IEnumerable<Tuple<long,decimal>> ReadAverages(string path)
