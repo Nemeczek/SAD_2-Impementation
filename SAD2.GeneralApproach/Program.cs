@@ -61,7 +61,6 @@ namespace SAD2.GeneralApproach
 			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, bufferSize))
 			{
 				string line;
-				streamReader.ReadLine();
 				while ((line = streamReader.ReadLine()) != null)
 				{
 					var parts = line.Split(",".ToCharArray());
