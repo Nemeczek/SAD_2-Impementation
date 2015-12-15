@@ -10,16 +10,26 @@ namespace SAD2.GeneralApproach
 	{
 		static void Main(string[] args)
 		{
-			var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
-			var something = output.Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
-			var results = ReadAverages(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Averages.txt");
+			string inputFile = args[0];
+			string outputFileName = args[1];
 
-			Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.Take(100).ToArray(), results.Select(v => v.Item2).Take(100).ToArray()));
+			//var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
+			var output = GeneralApproach(inputFile, outputFileName);
+			var something = output.Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
+			//var results = ReadAveragesFromFile(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Averages.txt");
+
+			var bb = something.ToList();
+			bb.Reverse();
+
+			Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.ToArray(), bb.ToArray()));
 			Console.ReadKey();
 		}
 
-		private static IEnumerable<Movie> GeneralApproach(string pathToFile)
+		private static IEnumerable<Movie> GeneralApproach(string pathToFile,string outputFileName = null, string outputFilePath = null)
 		{
+			if (outputFileName == null)
+				outputFileName = "Averages.txt";	
+
 			Dictionary<long, Movie> currentMoviesList = new Dictionary<long, Movie>();
 			const int bufferSize = 128;
 			using (var fileStream = File.OpenRead(pathToFile))
@@ -40,34 +50,8 @@ namespace SAD2.GeneralApproach
 					currentMoviesList[movie.Id].Occurences++;
 				}
 			}
-
-			string mydocpath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			var output = currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating/n.Occurences);
-
-			using (StreamWriter outputFile = new StreamWriter(mydocpath + @"\Averages.txt"))
-			{
-				foreach (var movie in output)
-					outputFile.WriteLine(movie.ToString());
-			}
-
+			currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences).SaveToFile(outputFileName,outputFilePath);
 			return currentMoviesList.Select(d => d.Value);
-		}
-
-		private static IEnumerable<Tuple<long,decimal>> ReadAverages(string path)
-		{
-			const int bufferSize = 128;
-			Stack<Tuple<long, decimal>> averages = new Stack<Tuple<long, decimal>>();
-			using (var fileStream = File.OpenRead(path))
-			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, bufferSize))
-			{
-				string line;
-				while ((line = streamReader.ReadLine()) != null)
-				{
-					var parts = line.Split(",".ToCharArray());
-					averages.Push(new Tuple<long, decimal>(long.Parse(parts[0]), decimal.Parse(parts[1])));
-				}
-			}
-			return averages;
 		}
 	}
 }
