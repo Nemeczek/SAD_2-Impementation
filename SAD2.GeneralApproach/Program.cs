@@ -61,7 +61,7 @@ namespace SAD2.GeneralApproach
 			if (args[0] == null)
 			{
 				Console.WriteLine("This program needs at least one parameter - input file");
-				return;
+				throw new ApplicationException();
 			}
 
 			inputFile = args[0];
