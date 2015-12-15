@@ -51,12 +51,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="SAD2.KendallTauDistance\SAD2.KendallTauDistance.csproj">
-      <Project>{68d1c94b-97e3-4545-9231-7383ea3fe20e}</Project>
-      <Name>SAD2.KendallTauDistance</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

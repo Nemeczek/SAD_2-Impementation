@@ -12,18 +12,19 @@ namespace SAD2.GeneralApproach
 		{
 			string inputFile = null;
 			string outputFileName = null;
+			string outputFilePath = null;
 
-			ManageConsoleInput(args,ref inputFile,ref outputFileName);
+			ManageConsoleInput(args,ref inputFile,ref outputFileName,ref outputFilePath);
 
 			//var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
-			var output = GeneralApproach(inputFile, outputFileName);
+			var output = GeneralApproach(inputFile, outputFileName,outputFilePath);
 			var something = output.Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
 			//var results = ReadAveragesFromFile(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Averages.txt");
 
 			var bb = something.ToList();
 			bb.Reverse();
 
-			Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.ToArray(), bb.ToArray()));
+			//Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.ToArray(), bb.ToArray()));
 			Console.ReadKey();
 		}
 
@@ -56,9 +57,9 @@ namespace SAD2.GeneralApproach
 			return currentMoviesList.Select(d => d.Value);
 		}
 
-		private static void ManageConsoleInput(string[] args,ref string inputFile,ref string outputFileName)
+		private static void ManageConsoleInput(string[] args, ref string inputFile, ref string outputFileName, ref string outputFilePath)
 		{
-			if (args[0] == null)
+			if (args.Length == 0 || args[0] == null)
 			{
 				Console.WriteLine("This program needs at least one parameter - input file");
 				throw new ApplicationException();
@@ -66,8 +67,11 @@ namespace SAD2.GeneralApproach
 
 			inputFile = args[0];
 
-			if (args[1] != null)
+			if (args.Length <= 1 || args[1] != null)
 				outputFileName = args[1];
+
+			if (args.Length <= 2 ||  args[2] != null)
+				outputFilePath = args[2];
 		}
 	}
 }
