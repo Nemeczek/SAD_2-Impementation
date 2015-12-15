@@ -10,8 +10,10 @@ namespace SAD2.GeneralApproach
 	{
 		static void Main(string[] args)
 		{
-			string inputFile = args[0];
-			string outputFileName = args[1];
+			string inputFile = null;
+			string outputFileName = null;
+
+			ManageConsoleInput(args,ref inputFile,ref outputFileName);
 
 			//var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
 			var output = GeneralApproach(inputFile, outputFileName);
@@ -52,6 +54,20 @@ namespace SAD2.GeneralApproach
 			}
 			currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences).SaveToFile(outputFileName,outputFilePath);
 			return currentMoviesList.Select(d => d.Value);
+		}
+
+		private static void ManageConsoleInput(string[] args,ref string inputFile,ref string outputFileName)
+		{
+			if (args[0] == null)
+			{
+				Console.WriteLine("This program needs at least one parameter - input file");
+				return;
+			}
+
+			inputFile = args[0];
+
+			if (args[1] != null)
+				outputFileName = args[1];
 		}
 	}
 }
