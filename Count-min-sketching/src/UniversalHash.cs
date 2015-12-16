@@ -4,7 +4,7 @@ using Hash = System.Func<long,int>;
 using SketchVector = System.Tuple<System.Func<long,int>, double[]>;
 
 class UniversalHash {
-	Random r;
+	static private Random r = new Random();
 	long a, b, n, q;
 	const long p = 100003;
 
@@ -16,7 +16,6 @@ class UniversalHash {
 			throw new ArgumentException("The (stupidly) hardcoded prime is no larger than (n = " + n + "). Find a new prime and recompile.." ); 
 		}
 
-		r = new Random();
 		a = RandomLong(1, p);
 		b = RandomLong(0, p+1);
 	}
@@ -54,16 +53,19 @@ class Sketch{
 	}
 
 	public void Add(Rating rating){
+		int i = 0;
 		foreach (SketchVector sv in sketches){
 			Hash h = sv.Hash();
+			int hashvalue = h(rating.Item1);
+			//Console.WriteLine("adding (" + rating.Item1 + "," + rating.Item2+") to vector " + i++ + ", position " + hashvalue);
 			double[] counters = sv.Counters();
 
-			counters[h(rating.Item1)] += rating.Item2;
+			counters[hashvalue] += rating.Item2;
 		}
 	}
 
 	public double Get(long movie){
-		double minCount=0;
+		double minCount=Double.MaxValue;
 		foreach (SketchVector sv in sketches) {
 			double count = sv.Counters()[sv.Hash()(movie)];
 			minCount = Math.Min(count, minCount);
