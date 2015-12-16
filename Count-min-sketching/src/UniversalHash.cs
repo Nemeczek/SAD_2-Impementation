@@ -53,11 +53,9 @@ class Sketch{
 	}
 
 	public void Add(Rating rating){
-		int i = 0;
 		foreach (SketchVector sv in sketches){
 			Hash h = sv.Hash();
 			int hashvalue = h(rating.Item1);
-			//Console.WriteLine("adding (" + rating.Item1 + "," + rating.Item2+") to vector " + i++ + ", position " + hashvalue);
 			double[] counters = sv.Counters();
 
 			counters[hashvalue] += rating.Item2;

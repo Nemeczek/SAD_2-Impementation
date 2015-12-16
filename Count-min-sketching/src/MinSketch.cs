@@ -27,27 +27,27 @@ namespace SAD2.Skething
 							    double.Parse(l[1]));
 				});
 
-			List<double> averages = EstimatedAverages(ratings);
-			foreach (double d in averages) {
-				Console.WriteLine(d);
+			List<Rating> averages = EstimatedAverages(ratings);
+			foreach (Rating r in averages) {
+				Console.WriteLine("{0},{1}", r.Item1, r.Item2);
 			}
 		}
 
-		private static List<double> EstimatedAverages(IEnumerable<Rating> ratings) {
+		private static List<Rating> EstimatedAverages(IEnumerable<Rating> ratings) {
+			HashSet<long> seen = new HashSet<long>();
 			Sketch sumSketch = new Sketch(0.1, 0.01, 99999);
 			Sketch frequencySketch = new Sketch(0.1, 0.01, 99999);
 			ratings.ForEach(r => {
 				//Console.WriteLine(r.Item1 + " : " + r.Item2);
+				seen.Add(r.Item1);
 				sumSketch.Add(r); //sum of ratings
 				frequencySketch.Add(Tuple.Create(r.Item1, 1.0)); //freq of ratings
 			});
-			List<double> avgs = new List<double>();
-			for(int i = 1; i <= 99999; i++){
+			List<Rating> avgs = new List<Rating>();
+			foreach(long i in seen){
 				double sum = sumSketch.Get(i);
 				double freq = frequencySketch.Get(i);
-				if (freq!=0.0){
-					avgs.Add(sum/freq);
-				}
+					avgs.Add(Tuple.Create(i, sum/freq));
 			}
 			avgs.Sort();
 			return avgs;
