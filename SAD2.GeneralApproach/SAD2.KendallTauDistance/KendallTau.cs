@@ -28,7 +28,7 @@ namespace SAD2.KendallTauDistance
 			}
 
 			var inversions = Inversions.count(bnew);
-			decimal bottom = (n*(n - 2))/2.0M;
+			decimal bottom = (n*(n - 1))/2.0M;
 			
 			return Math.Round(inversions / bottom, 1, MidpointRounding.ToEven); ;
 		}

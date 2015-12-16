@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Rating = System.Tuple<long,double>;
 
 namespace SAD2.GeneralApproach
 {
@@ -10,68 +11,37 @@ namespace SAD2.GeneralApproach
 	{
 		static void Main(string[] args)
 		{
-			string inputFile = null;
-			string outputFileName = null;
-			string outputFilePath = null;
+			if (args.Length != 1)
+			{
+				Console.WriteLine("This program needs exactly one parameter - input file");
+				return;
+			}
 
-			ManageConsoleInput(args,ref inputFile,ref outputFileName,ref outputFilePath);
+			IEnumerable<Movie> moviesByAvg = GeneralApproach(File.ReadLines(args[0]));
 
-			//var output = GeneralApproach(@"C:\Users\nemec\Downloads\ml-latest\ratings.csv");
-			var output = GeneralApproach(inputFile, outputFileName,outputFilePath);
-			var something = output.Select(n => n.Rating / n.Occurences).OrderByDescending(v => v).ToList();
-			//var results = ReadAveragesFromFile(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Averages.txt");
-
-			var bb = something.ToList();
-			bb.Reverse();
-
+			foreach(Movie m in moviesByAvg){
+				Console.WriteLine(m);
+			}
 			//Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.ToArray(), bb.ToArray()));
-			Console.ReadKey();
 		}
 
-		private static IEnumerable<Movie> GeneralApproach(string pathToFile,string outputFileName = null, string outputFilePath = null)
+		private static IEnumerable<Movie> GeneralApproach(IEnumerable<string> lines)
 		{
-			if (outputFileName == null)
-				outputFileName = "Averages.txt";	
-
 			Dictionary<long, Movie> currentMoviesList = new Dictionary<long, Movie>();
-			const int bufferSize = 128;
-			using (var fileStream = File.OpenRead(pathToFile))
-			using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, bufferSize))
+			foreach(string line in lines)
 			{
-				string line;
-				streamReader.ReadLine();
-				while ((line = streamReader.ReadLine()) != null)
-				{
-					var parts = line.Split(",".ToCharArray());
-					var movie = new Movie(long.Parse(parts[1]), decimal.Parse(parts[2]));
+				var parts = line.Split(",".ToCharArray());
+				var movie = new Movie(long.Parse(parts[0]), decimal.Parse(parts[1]));
 
-					if (currentMoviesList.ContainsKey(movie.Id))
-						currentMoviesList[movie.Id].Rating += movie.Rating;
-					else
-						currentMoviesList.Add(movie.Id, movie);
+				if (currentMoviesList.ContainsKey(movie.Id))
+					currentMoviesList[movie.Id].Rating += movie.Rating;
+				else
+					currentMoviesList.Add(movie.Id, movie);
 
-					currentMoviesList[movie.Id].Occurences++;
-				}
+				currentMoviesList[movie.Id].Occurences++;
 			}
-			currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences).SaveToFile(outputFileName,outputFilePath);
+			currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences).Reverse();
 			return currentMoviesList.Select(d => d.Value);
-		}
-
-		private static void ManageConsoleInput(string[] args, ref string inputFile, ref string outputFileName, ref string outputFilePath)
-		{
-			if (args.Length == 0 || args[0] == null)
-			{
-				Console.WriteLine("This program needs at least one parameter - input file");
-				throw new ApplicationException();
-			}
-
-			inputFile = args[0];
-
-			if (args.Length <= 1 || args[1] != null)
-				outputFileName = args[1];
-
-			if (args.Length <= 2 ||  args[2] != null)
-				outputFilePath = args[2];
 		}
 	}
 }
