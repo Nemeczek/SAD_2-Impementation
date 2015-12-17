@@ -36,19 +36,29 @@ class UniversalHash {
 }
 
 class Sketch{
-	int d; //number of sketches
 	SketchVector[] sketches; //our family of hash functions
 
 	public Sketch(double epsilon, double delta, long domainSize){
 		// imageSize corresponds to w in ikonomovska
 		int imageSize = (int) Math.Ceiling(2/epsilon);
-		d = (int) Math.Ceiling(Math.Log(1/delta));
+		int d = (int) Math.Ceiling(Math.Log(1/delta));
 		sketches = new Tuple<Hash, double[]>[d];
 
 		for (int i = 0; i<d; i++){
 
 			UniversalHash h = new UniversalHash(domainSize, imageSize);
 			sketches[i] = Tuple.Create<Hash, double[]>(h.Hash, new double[imageSize]);
+		}
+	}
+
+
+	//Reuse hash functions
+	public Sketch(Sketch sketch){
+		SketchVector[] existingSketches = sketch.sketches;
+		sketches = new Tuple<Hash, double[]>[existingSketches.Length];
+		for(int i =0; i< existingSketches.Length; i++){
+			var exSketch = existingSketches[i];
+			sketches[i] = Tuple.Create(exSketch.Hash(), new double[exSketch.Counters().Length]);
 		}
 	}
 

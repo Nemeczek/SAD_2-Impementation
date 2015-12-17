@@ -36,7 +36,7 @@ namespace SAD2.Skething
 		private static IEnumerable<Rating> EstimatedAverages(IEnumerable<Rating> ratings) {
 			HashSet<long> seen = new HashSet<long>();
 			Sketch sumSketch = new Sketch(0.1, 0.01, 99999);
-			Sketch frequencySketch = new Sketch(0.1, 0.01, 99999);
+			Sketch frequencySketch = new Sketch(sumSketch);
 			ratings.ForEach(r => {
 				//Console.WriteLine(r.Item1 + " : " + r.Item2);
 				seen.Add(r.Item1);
