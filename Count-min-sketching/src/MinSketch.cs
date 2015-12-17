@@ -27,13 +27,13 @@ namespace SAD2.Skething
 							    double.Parse(l[1]));
 				});
 
-			List<Rating> averages = EstimatedAverages(ratings);
+			IEnumerable<Rating> averages = EstimatedAverages(ratings).OrderByDescending(r => r.Item2);
 			foreach (Rating r in averages) {
 				Console.WriteLine("{0},{1}", r.Item1, r.Item2);
 			}
 		}
 
-		private static List<Rating> EstimatedAverages(IEnumerable<Rating> ratings) {
+		private static IEnumerable<Rating> EstimatedAverages(IEnumerable<Rating> ratings) {
 			HashSet<long> seen = new HashSet<long>();
 			Sketch sumSketch = new Sketch(0.1, 0.01, 99999);
 			Sketch frequencySketch = new Sketch(0.1, 0.01, 99999);
@@ -49,7 +49,6 @@ namespace SAD2.Skething
 				double freq = frequencySketch.Get(i);
 					avgs.Add(Tuple.Create(i, sum/freq));
 			}
-			avgs.Sort();
 			return avgs;
 		}
 	}

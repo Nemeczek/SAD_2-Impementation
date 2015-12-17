@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace SAD2.KendallTauDistance
@@ -19,6 +21,33 @@ namespace SAD2.KendallTauDistance
 
 			Console.WriteLine(KendallTau.Distance(a.ToArray(),b.ToArray()));
 			Console.ReadKey();
+		}
+	}
+
+	class KendalTauMovieRatings
+	{
+		static void Main(string[] args)
+		{
+			if(args.Length != 2) {
+				Console.WriteLine("program takes two arguments -- two file name");
+				return;
+
+			}
+
+			char[] commaSep = new char[] {','};
+			decimal[] l1 = File.ReadLines(args[0]).Select(line=> {
+					string[] l = line.Split(commaSep);
+ 					//(movieId, rating) pair
+					return decimal.Parse(l[0]);
+				}).ToArray();
+
+			decimal[] l2 = File.ReadLines(args[1]).Select(line=> {
+					string[] l = line.Split(commaSep);
+ 					//(movieId, rating) pair
+					return decimal.Parse(l[0]);
+				}).ToArray();
+
+			Console.WriteLine(KendallTau.Distance(l1,l2));
 		}
 	}
 }

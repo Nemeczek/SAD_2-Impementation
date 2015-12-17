@@ -20,7 +20,7 @@ namespace SAD2.GeneralApproach
 			IEnumerable<Movie> moviesByAvg = GeneralApproach(File.ReadLines(args[0]));
 
 			foreach(Movie m in moviesByAvg){
-				Console.WriteLine(m);
+				Console.WriteLine(m.Id + "," +m.Rating/m.Occurences);
 			}
 			//Console.WriteLine(KendallTauDistance.KendallTau.Distance(something.ToArray(), bb.ToArray()));
 		}
@@ -40,8 +40,7 @@ namespace SAD2.GeneralApproach
 
 				currentMoviesList[movie.Id].Occurences++;
 			}
-			currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences).Reverse();
-			return currentMoviesList.Select(d => d.Value);
+			return currentMoviesList.Select(d => d.Value).OrderByDescending(n => n.Rating / n.Occurences);
 		}
 	}
 }
